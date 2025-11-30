@@ -16,7 +16,8 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  // Removed outputFileTracingRoot which was causing path issues
+  // Set outputFileTracingRoot to a relative path to avoid absolute path issues
+  outputFileTracingRoot: path.resolve(__dirname),
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -29,9 +30,7 @@ const nextConfig: NextConfig = {
         loaders: [LOADER]
       }
     }
-  },
-  // Keep output configuration for Vercel
-  output: 'standalone'
+  }
 };
 
 export default nextConfig;

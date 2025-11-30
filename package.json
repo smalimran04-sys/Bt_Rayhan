@@ -5,10 +5,8 @@
     "scripts": {
         "dev": "next dev --turbopack",
         "build": "next build",
-        "start": "node .next/standalone/server.js",
-        "lint": "next lint",
-        "vercel-build": "NEXT_STANDALONE_BUILD=true next build",
-        "clean-build": "rm -rf .next && NEXT_STANDALONE_BUILD=true next build"
+        "start": "next start",
+        "lint": "next lint"
     },
     "dependencies": {
         "@babel/parser": "^7.28.5",
