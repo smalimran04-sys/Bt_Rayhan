@@ -16,7 +16,7 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  outputFileTracingRoot: path.resolve(__dirname, '../../'),
+  // Removed outputFileTracingRoot which was causing path issues
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -30,9 +30,8 @@ const nextConfig: NextConfig = {
       }
     }
   },
-  // Add output configuration for Vercel
+  // Keep output configuration for Vercel
   output: 'standalone'
 };
 
 export default nextConfig;
-// Orchids restart: 1764507418625
