@@ -1,6 +1,0 @@
-# Ignore all files except the standalone build
-/*
-!/package.json
-!/server.js
-!/.next/
-!/.env
