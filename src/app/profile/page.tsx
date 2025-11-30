@@ -90,10 +90,26 @@ export default function ProfilePage() {
               </div>
 
               <div className="flex items-center gap-3 p-4 bg-muted/50 rounded-lg">
+                <UserIcon className="h-5 w-5 text-muted-foreground" />
+                <div className="flex-1">
+                  <p className="text-sm text-muted-foreground">Full Name</p>
+                  <p className="font-medium">{user.name}</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 p-4 bg-muted/50 rounded-lg">
                 <Mail className="h-5 w-5 text-muted-foreground" />
                 <div className="flex-1">
                   <p className="text-sm text-muted-foreground">Email</p>
                   <p className="font-medium">{user.email}</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 p-4 bg-muted/50 rounded-lg">
+                <Building2 className="h-5 w-5 text-muted-foreground" />
+                <div className="flex-1">
+                  <p className="text-sm text-muted-foreground">Designation</p>
+                  <p className="font-medium">{user.designation || 'Not specified'}</p>
                 </div>
               </div>
 
@@ -105,15 +121,13 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              {user.phone && (
-                <div className="flex items-center gap-3 p-4 bg-muted/50 rounded-lg">
-                  <Phone className="h-5 w-5 text-muted-foreground" />
-                  <div className="flex-1">
-                    <p className="text-sm text-muted-foreground">Phone</p>
-                    <p className="font-medium">{user.phone}</p>
-                  </div>
+              <div className="flex items-center gap-3 p-4 bg-muted/50 rounded-lg">
+                <Phone className="h-5 w-5 text-muted-foreground" />
+                <div className="flex-1">
+                  <p className="text-sm text-muted-foreground">Phone</p>
+                  <p className="font-medium">{user.phone || 'Not specified'}</p>
                 </div>
-              )}
+              </div>
 
               <div className="flex items-center gap-3 p-4 bg-muted/50 rounded-lg">
                 <UserIcon className="h-5 w-5 text-muted-foreground" />

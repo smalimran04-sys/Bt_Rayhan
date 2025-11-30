@@ -9,6 +9,7 @@ export interface User {
   role: 'customer' | 'admin';
   name: string;
   department: string;
+  designation?: string;
   phone?: string;
 }
 

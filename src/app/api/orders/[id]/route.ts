@@ -69,6 +69,8 @@ export async function GET(
         email: users.email,
         name: users.name,
         department: users.department,
+        designation: users.designation,
+        phone: users.phone,
       })
       .from(users)
       .where(eq(users.id, order.userId))

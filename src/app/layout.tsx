@@ -3,6 +3,7 @@ import "./globals.css";
 import VisualEditsMessenger from "../visual-edits/VisualEditsMessenger";
 import ErrorReporter from "@/components/ErrorReporter";
 import Script from "next/script";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "BAUST Tea Bar - Order Tea & Snacks",
@@ -18,6 +19,19 @@ export default function RootLayout({
     <html lang="en" className="scroll-smooth">
       <body className="antialiased min-h-screen bg-background">
         <ErrorReporter />
+        <Toaster 
+          position="top-center" 
+          richColors 
+          expand={true}
+          toastOptions={{
+            style: {
+              padding: '16px',
+              fontSize: '16px',
+              minWidth: '350px',
+            },
+            className: 'toast-custom',
+          }}
+        />
         {children}
         <VisualEditsMessenger />
         <Script

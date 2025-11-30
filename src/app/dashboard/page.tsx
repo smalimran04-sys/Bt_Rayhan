@@ -13,6 +13,7 @@ import { QRScanner } from '@/components/QRScanner';
 import Link from 'next/link';
 import ProfessionalHeader from '@/components/ProfessionalHeader';
 import { Input } from '@/components/ui/input';
+import { toast } from 'sonner';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -49,18 +50,48 @@ export default function DashboardPage() {
   };
 
   const handleAddToCart = (item: MenuItem) => {
+    // Prevent admins from adding to cart
+    if (user?.role === 'admin') {
+      toast.error('Admin cannot place orders', {
+        description: 'Please use a customer account to order',
+        duration: 3000,
+      });
+      return;
+    }
+    
     addItem(item);
+    toast.success('Added to cart!', {
+      description: `${item.name} - ৳${item.price}`,
+      duration: 3000,
+    });
   };
 
   const handleQRScan = async (menuItemId: number) => {
+    // Prevent admins from adding to cart
+    if (user?.role === 'admin') {
+      toast.error('Admin cannot place orders', {
+        description: 'Please use a customer account to order',
+        duration: 3000,
+      });
+      return;
+    }
+    
     try {
       const response = await fetch(`/api/menu/${menuItemId}`);
       const item = await response.json();
       if (item && item.available) {
         addItem(item);
+        toast.success('Added to cart!', {
+          description: `${item.name} - ৳${item.price}`,
+          duration: 3000,
+        });
       }
     } catch (error) {
       console.error('Failed to add scanned item:', error);
+      toast.error('Failed to add item', {
+        description: 'Please try again',
+        duration: 3000,
+      });
     }
   };
 

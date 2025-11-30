@@ -10,10 +10,10 @@ export async function POST(request: NextRequest) {
     const { email, password, name, department, phone } = body;
 
     // Validate required fields
-    if (!email || !password || !name || !department) {
+    if (!email || !password || !name) {
       return NextResponse.json(
         { 
-          error: 'Email, password, name and department are required',
+          error: 'Email, password, and name are required',
           code: 'MISSING_REQUIRED_FIELDS'
         },
         { status: 400 }
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     // Sanitize inputs
     const sanitizedEmail = email.trim().toLowerCase();
     const sanitizedName = name.trim();
-    const sanitizedDepartment = department.trim();
+    const sanitizedDepartment = department ? department.trim() : 'Not Specified';
 
     // Validate email format
     if (!sanitizedEmail.includes('@')) {

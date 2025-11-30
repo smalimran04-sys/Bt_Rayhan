@@ -140,11 +140,10 @@ export default function RegisterPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="department">Department</Label>
+                  <Label htmlFor="department">Department (Optional)</Label>
                   <Select
                     value={formData.department}
                     onValueChange={(value) => setFormData({ ...formData, department: value })}
-                    required
                     disabled={isLoading}
                   >
                     <SelectTrigger className="professional-input">
@@ -158,6 +157,7 @@ export default function RegisterPage() {
                       ))}
                     </SelectContent>
                   </Select>
+                  <p className="text-xs text-muted-foreground">You can complete this later at checkout</p>
                 </div>
 
                 <div className="space-y-2">
@@ -171,6 +171,7 @@ export default function RegisterPage() {
                     disabled={isLoading}
                     className="professional-input"
                   />
+                  <p className="text-xs text-muted-foreground">You can complete this later at checkout</p>
                 </div>
 
                 <Button 

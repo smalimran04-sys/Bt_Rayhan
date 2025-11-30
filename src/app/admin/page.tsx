@@ -40,6 +40,29 @@ interface Order {
   createdAt: string;
 }
 
+interface OrderDetails {
+  order: Order;
+  orderItems: Array<{
+    id: number;
+    quantity: number;
+    price: number;
+    menuItem: {
+      id: number;
+      name: string;
+      description: string;
+      category: string;
+    };
+  }>;
+  user: {
+    id: number;
+    name: string;
+    email: string;
+    department: string;
+    designation: string | null;
+    phone: string | null;
+  } | null;
+}
+
 export default function AdminPage() {
   const router = useRouter();
   const user = useAuthStore((state) => state.user);
@@ -51,6 +74,8 @@ export default function AdminPage() {
   const [isLoadingOrders, setIsLoadingOrders] = useState(true);
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [editingItem, setEditingItem] = useState<MenuItem | null>(null);
+  const [selectedOrder, setSelectedOrder] = useState<OrderDetails | null>(null);
+  const [isLoadingOrderDetails, setIsLoadingOrderDetails] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -160,6 +185,19 @@ export default function AdminPage() {
     }
   };
 
+  const fetchOrderDetails = async (orderId: number) => {
+    try {
+      setIsLoadingOrderDetails(true);
+      const response = await fetch(`/api/orders/${orderId}`);
+      const data = await response.json();
+      setSelectedOrder(data);
+    } catch (error) {
+      console.error('Failed to fetch order details:', error);
+    } finally {
+      setIsLoadingOrderDetails(false);
+    }
+  };
+
   const handleUpdateOrderStatus = async (orderId: number, newStatus: string) => {
     try {
       const response = await fetch(`/api/orders/${orderId}`, {
@@ -170,6 +208,9 @@ export default function AdminPage() {
 
       if (response.ok) {
         fetchOrders();
+        if (selectedOrder && selectedOrder.order.id === orderId) {
+          fetchOrderDetails(orderId);
+        }
       }
     } catch (error) {
       console.error('Failed to update order status:', error);
@@ -424,7 +465,7 @@ export default function AdminPage() {
                     <Card key={order.id} className="professional-card">
                       <CardContent className="p-4">
                         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                          <div>
+                          <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
                               <span className="font-semibold">Order #{order.id}</span>
                               <Badge className={getStatusColor(order.orderStatus)}>
@@ -451,13 +492,21 @@ export default function AdminPage() {
                             )}
                           </div>
                           
-                          <div className="flex flex-col items-end">
+                          <div className="flex flex-col items-end gap-2">
                             <p className="text-lg font-bold text-primary">৳{order.totalAmount}</p>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => fetchOrderDetails(order.id)}
+                              className="rounded-full"
+                            >
+                              View Details
+                            </Button>
                             <Select
                               value={order.orderStatus}
                               onValueChange={(value) => handleUpdateOrderStatus(order.id, value)}
                             >
-                              <SelectTrigger className="w-32 mt-2">
+                              <SelectTrigger className="w-32">
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent>
@@ -577,6 +626,121 @@ export default function AdminPage() {
               className="rounded-full bg-primary hover:bg-primary/90"
             >
               {editingItem ? 'Update Item' : 'Add Item'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Order Details Dialog */}
+      <Dialog open={!!selectedOrder} onOpenChange={(open) => !open && setSelectedOrder(null)}>
+        <DialogContent className="professional-card max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Order Details #{selectedOrder?.order.id}</DialogTitle>
+            <DialogDescription>
+              Complete order information including customer details and items
+            </DialogDescription>
+          </DialogHeader>
+
+          {isLoadingOrderDetails ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          ) : selectedOrder && (
+            <div className="space-y-6">
+              {/* Customer Details */}
+              <div>
+                <h3 className="font-semibold text-lg mb-3">Customer Information</h3>
+                <div className="grid grid-cols-2 gap-4 p-4 bg-muted/50 rounded-lg">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Name</p>
+                    <p className="font-medium">{selectedOrder.user?.name || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Email</p>
+                    <p className="font-medium text-sm">{selectedOrder.user?.email || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Designation</p>
+                    <p className="font-medium">{selectedOrder.user?.designation || 'Not specified'}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Department</p>
+                    <p className="font-medium">{selectedOrder.user?.department || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Phone</p>
+                    <p className="font-medium">{selectedOrder.user?.phone || 'Not specified'}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">User ID</p>
+                    <p className="font-medium">#{selectedOrder.user?.id}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Order Items */}
+              <div>
+                <h3 className="font-semibold text-lg mb-3">Ordered Items</h3>
+                <div className="space-y-3">
+                  {selectedOrder.orderItems.map((item) => (
+                    <div key={item.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                      <div className="flex-1">
+                        <p className="font-medium">{item.menuItem.name}</p>
+                        <p className="text-sm text-muted-foreground">{item.menuItem.category}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-medium">৳{item.price} × {item.quantity}</p>
+                        <p className="text-sm text-primary font-semibold">৳{item.price * item.quantity}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Order Summary */}
+              <div>
+                <h3 className="font-semibold text-lg mb-3">Order Summary</h3>
+                <div className="space-y-2 p-4 bg-muted/50 rounded-lg">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Order Type</span>
+                    <span className="font-medium capitalize">{selectedOrder.order.orderType}</span>
+                  </div>
+                  {selectedOrder.order.scheduledDate && (
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Scheduled Date</span>
+                      <span className="font-medium">{format(new Date(selectedOrder.order.scheduledDate), 'PPP')}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Payment Method</span>
+                    <span className="font-medium uppercase">{selectedOrder.order.paymentMethod}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Payment Status</span>
+                    <Badge variant={selectedOrder.order.paymentStatus === 'completed' ? 'default' : 'secondary'}>
+                      {selectedOrder.order.paymentStatus}
+                    </Badge>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Order Status</span>
+                    <Badge className={getStatusColor(selectedOrder.order.orderStatus)}>
+                      {selectedOrder.order.orderStatus}
+                    </Badge>
+                  </div>
+                  <div className="border-t pt-2 mt-2">
+                    <div className="flex justify-between text-lg">
+                      <span className="font-semibold">Total Amount</span>
+                      <span className="font-bold text-primary">৳{selectedOrder.order.totalAmount}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setSelectedOrder(null)}>
+              Close
             </Button>
           </DialogFooter>
         </DialogContent>

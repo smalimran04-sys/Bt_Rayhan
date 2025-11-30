@@ -10,6 +10,7 @@ import { ArrowLeft, Minus, Plus, Trash2, ShoppingBag } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import ProfessionalHeader from '@/components/ProfessionalHeader';
+import { toast } from 'sonner';
 
 export default function CartPage() {
   const router = useRouter();
@@ -75,7 +76,12 @@ export default function CartPage() {
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8 rounded-full"
-                            onClick={() => removeItem(item.menuItem.id)}
+                            onClick={() => {
+                              removeItem(item.menuItem.id);
+                              toast.error(`${item.menuItem.name} removed from cart`, {
+                                duration: 2000,
+                              });
+                            }}
                           >
                             <Trash2 className="h-4 w-4 text-destructive" />
                           </Button>
@@ -85,7 +91,15 @@ export default function CartPage() {
                               variant="outline"
                               size="icon"
                               className="h-8 w-8 rounded-full"
-                              onClick={() => updateQuantity(item.menuItem.id, item.quantity - 1)}
+                              onClick={() => {
+                                const newQty = item.quantity - 1;
+                                updateQuantity(item.menuItem.id, newQty);
+                                if (newQty === 0) {
+                                  toast.error(`${item.menuItem.name} removed from cart`, {
+                                    duration: 2000,
+                                  });
+                                }
+                              }}
                             >
                               <Minus className="h-3 w-3" />
                             </Button>

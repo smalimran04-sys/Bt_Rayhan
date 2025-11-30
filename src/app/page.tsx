@@ -24,6 +24,7 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import ProfessionalHeader from '@/components/ProfessionalHeader';
+import { toast } from 'sonner';
 
 export default function Home() {
   const router = useRouter();
@@ -58,7 +59,21 @@ export default function Home() {
       router.push('/login');
       return;
     }
+    
+    // Prevent admins from adding to cart
+    if (user.role === 'admin') {
+      toast.error('Admin cannot place orders', {
+        description: 'Please use a customer account to order',
+        duration: 3000,
+      });
+      return;
+    }
+    
     addItem(item);
+    toast.success('Added to cart!', {
+      description: `${item.name} - ৳${item.price}`,
+      duration: 3000,
+    });
   };
 
   const filteredItems = menuItems.filter(item => {
@@ -268,13 +283,23 @@ export default function Home() {
                           <p className="text-muted-foreground text-sm mb-4 line-clamp-2">{item.description}</p>
                           <div className="flex items-center justify-between">
                             <span className="text-xl font-bold text-primary">৳{item.price}</span>
-                            <Button
-                              className="rounded-full bg-primary hover:bg-primary/90"
-                              onClick={() => handleAddToCart(item)}
-                            >
-                              <Plus size={16} className="mr-2" />
-                              Add to Cart
-                            </Button>
+                            {user?.role === 'admin' ? (
+                              <Button
+                                className="rounded-full"
+                                variant="outline"
+                                disabled
+                              >
+                                Admin View
+                              </Button>
+                            ) : (
+                              <Button
+                                className="rounded-full bg-primary hover:bg-primary/90"
+                                onClick={() => handleAddToCart(item)}
+                              >
+                                <Plus size={16} className="mr-2" />
+                                Add to Cart
+                              </Button>
+                            )}
                           </div>
                         </div>
                       </Card>
@@ -312,8 +337,8 @@ export default function Home() {
                     {filteredItems.map((item) => (
                       <Card 
                         key={item.id} 
-                        className="professional-card p-5 cursor-pointer hover:shadow-md transition-all"
-                        onClick={() => handleAddToCart(item)}
+                        className={`professional-card p-5 transition-all ${user?.role === 'admin' ? '' : 'cursor-pointer hover:shadow-md'}`}
+                        onClick={() => user?.role !== 'admin' && handleAddToCart(item)}
                       >
                         <div className="flex gap-4">
                           <div className="relative w-24 h-24 flex-shrink-0 rounded-xl overflow-hidden">
@@ -337,16 +362,26 @@ export default function Home() {
                             
                             <div className="flex items-center justify-between">
                               <span className="text-lg font-bold text-primary">৳{item.price}</span>
-                              <Button
-                                className="rounded-full bg-primary hover:bg-primary/90 h-9 px-4"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleAddToCart(item);
-                                }}
-                              >
-                                <Plus size={16} className="mr-1" />
-                                Add
-                              </Button>
+                              {user?.role === 'admin' ? (
+                                <Button
+                                  className="rounded-full h-9 px-4"
+                                  variant="outline"
+                                  disabled
+                                >
+                                  Admin
+                                </Button>
+                              ) : (
+                                <Button
+                                  className="rounded-full bg-primary hover:bg-primary/90 h-9 px-4"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleAddToCart(item);
+                                  }}
+                                >
+                                  <Plus size={16} className="mr-1" />
+                                  Add
+                                </Button>
+                              )}
                             </div>
                           </div>
                         </div>
