@@ -132,7 +132,7 @@ export default function ProfessionalHeader({
                   </Link>
                 )}
                 
-                <Link href="/profile">
+                <Link href={user.role === 'admin' ? '/admin/profile' : '/profile'}>
                   <Button variant="ghost" size="icon" className="rounded-full">
                     <User className="h-4 w-4" />
                   </Button>
@@ -240,12 +240,20 @@ export default function ProfessionalHeader({
                 </Link>
               </>
             ) : user?.role === 'admin' ? (
-              <Link href="/admin" className="block">
-                <Button variant="ghost" className="w-full justify-start rounded-xl py-6">
-                  <Home className="h-5 w-5 mr-3" />
-                  Admin Dashboard
-                </Button>
-              </Link>
+              <>
+                <Link href="/admin" className="block">
+                  <Button variant="ghost" className="w-full justify-start rounded-xl py-6">
+                    <Home className="h-5 w-5 mr-3" />
+                    Admin Dashboard
+                  </Button>
+                </Link>
+                <Link href="/admin/profile" className="block">
+                  <Button variant="ghost" className="w-full justify-start rounded-xl py-6">
+                    <User className="h-5 w-5 mr-3" />
+                    Admin Profile
+                  </Button>
+                </Link>
+              </>
             ) : null}
             
             {user ? (

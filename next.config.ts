@@ -29,7 +29,9 @@ const nextConfig: NextConfig = {
         loaders: [LOADER]
       }
     }
-  }
+  },
+  // Add output configuration for Vercel
+  output: 'standalone'
 };
 
 export default nextConfig;
