@@ -126,14 +126,6 @@ export default function LoginPage() {
                     Register here
                   </Link>
                 </div>
-
-                <div className="pt-4 border-t">
-                  <p className="text-xs text-center text-muted-foreground mb-2">Demo Credentials:</p>
-                  <div className="text-xs space-y-1 text-muted-foreground">
-                    <p><strong>Customer:</strong> mrittika@baust.edu.bd / customer123</p>
-                    <p><strong>Admin:</strong> admin@baust.edu.bd / admin123</p>
-                  </div>
-                </div>
               </form>
             </CardContent>
           </Card>

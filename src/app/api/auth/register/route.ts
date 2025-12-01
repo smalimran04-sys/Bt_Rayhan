@@ -7,7 +7,7 @@ import bcrypt from 'bcrypt';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { email, password, name, department, phone } = body;
+    const { email, password, name, designation, department, phone } = body;
 
     // Validate required fields
     if (!email || !password || !name) {
@@ -73,6 +73,7 @@ export async function POST(request: NextRequest) {
         password: hashedPassword,
         role: 'customer',
         name: sanitizedName,
+        designation: designation ? designation.trim() : null,
         department: sanitizedDepartment,
         phone: phone || null,
         createdAt: new Date().toISOString()

@@ -18,6 +18,7 @@ export default function RegisterPage() {
     name: '',
     email: '',
     password: '',
+    designation: '',
     department: '',
     phone: '',
   });
@@ -137,6 +138,20 @@ export default function RegisterPage() {
                     minLength={6}
                     className="professional-input"
                   />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="designation">Designation (Optional)</Label>
+                  <Input
+                    id="designation"
+                    type="text"
+                    placeholder="e.g., Student, Professor, Staff"
+                    value={formData.designation}
+                    onChange={(e) => setFormData({ ...formData, designation: e.target.value })}
+                    disabled={isLoading}
+                    className="professional-input"
+                  />
+                  <p className="text-xs text-muted-foreground">You can complete this later at checkout</p>
                 </div>
 
                 <div className="space-y-2">
