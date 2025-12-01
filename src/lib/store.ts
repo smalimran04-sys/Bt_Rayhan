@@ -48,8 +48,21 @@ export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
       user: null,
-      setUser: (user) => set({ user }),
-      logout: () => set({ user: null }),
+      setUser: (user) => {
+        set({ user });
+        // Clear cart when switching users
+        if (user) {
+          const currentUserId = useAuthStore.getState().user?.id;
+          if (currentUserId !== user.id) {
+            useCartStore.getState().clearCart();
+          }
+        }
+      },
+      logout: () => {
+        set({ user: null });
+        // Clear cart on logout
+        useCartStore.getState().clearCart();
+      },
     }),
     {
       name: 'auth-storage',
@@ -103,7 +116,10 @@ export const useCartStore = create<CartState>()(
       },
     }),
     {
-      name: 'cart-storage',
+      name: () => {
+        const user = useAuthStore.getState().user;
+        return user ? `cart-storage-${user.id}` : 'cart-storage-guest';
+      },
     }
   )
 );
